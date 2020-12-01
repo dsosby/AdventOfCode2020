@@ -4,17 +4,20 @@ open System
 
 module Solutions =
 
-    let solve (input : string) =
-        let nums = input.Split "\n" |> Array.map int
-        let targetCondition = (fun (lhv, rhv) -> lhv + rhv = 2020)
+    let private commutativePairs (nums : int [])=
         let maxidx = nums.Length - 1
-        let sums = seq {
+        seq {
             for i in 0..maxidx do
                 for j in i..maxidx do
                     (nums.[i], nums.[j])
         }
-        let pair = Seq.tryFind targetCondition sums
-        Option.map (fun (lhv, rhv) -> lhv * rhv) pair
+
+    let private solve (input : string) =
+        input.Split "\n"
+        |> Array.map int
+        |> commutativePairs
+        |> Seq.tryFind (fun (lhv, rhv) -> lhv + rhv = 2020)
+        |> Option.map (fun (lhv, rhv) -> lhv * rhv)
 
     let Day1 input =
         match input with

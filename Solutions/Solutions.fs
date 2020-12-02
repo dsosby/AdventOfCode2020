@@ -4,6 +4,7 @@ let solutions = dict[
     "day1part1", Day1.solvePart1;
     "day1part2", Day1.solvePart2;
     "day2part1", Day2.solvePart1;
+    "day2part2", Day2.solvePart2;
 ]
 
 let solve key input =

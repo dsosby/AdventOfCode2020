@@ -36,3 +36,24 @@ let solvePart1 (values : string) =
     |> Seq.length
     |> Some
 
+let isValidPasswordToo (value : string) =
+    let parts = value.Split [| ':' |]
+    match parts with
+    | [| rule;password |] ->
+        let ruleparts = rule.Split [| '-'; ' ' |]
+        let indexone = int ruleparts.[0]
+        let indextwo = int ruleparts.[1]
+        let letter = ruleparts.[2].[0]
+        let letterone = password.[indexone] // I didn't strip the leading space, so get 1-based index for free
+        let lettertwo = password.[indextwo]
+        let onlyOneValid = (letterone = letter && lettertwo <> letter) || (letterone <> letter && lettertwo = letter) // xor?
+        onlyOneValid
+    | _ -> false
+
+let solvePart2 (values : string) =
+    values.Split [| '\n' |]
+    |> Seq.map isValidPasswordToo
+    |> Seq.filter (fun x -> true = x) // Is there a better way to express a truth predicate?
+    |> Seq.length
+    |> Some
+

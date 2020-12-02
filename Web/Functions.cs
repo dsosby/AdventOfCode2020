@@ -38,5 +38,14 @@ namespace AdventOfCode2020.Web
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             return new OkObjectResult(Solutions.solve("day2part1", requestBody));
         }
+
+        [FunctionName("Day2Part2")]
+        public static async Task<IActionResult> Day2Part2(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            return new OkObjectResult(Solutions.solve("day2part2", requestBody));
+        }
     }
 }

@@ -10,14 +10,16 @@ namespace AdventOfCode2020.Web
 {
     public static class Functions
     {
-        [FunctionName("Day1")]
+        [FunctionName("Day1Part1")]
         public static async Task<IActionResult> Day1(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.Day1(requestBody));
+            return new OkObjectResult(Solutions.solve("day1part1", requestBody));
         }
+
+        // TODO Refactor to use dynamic solver bindings
 
         [FunctionName("Day1Part2")]
         public static async Task<IActionResult> Day1Part2(
@@ -25,7 +27,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.Day1Part2(requestBody));
+            return new OkObjectResult(Solutions.solve("day1part2", requestBody));
         }
     }
 }

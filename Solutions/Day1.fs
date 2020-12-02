@@ -13,7 +13,7 @@ module Solutions =
         }
 
     let private solve (input : string) =
-        input.Split "\n"
+        input.Split [|'\n'|]
         |> Array.map int
         |> commutativePairs
         |> Seq.tryFind (fun (lhv, rhv) -> lhv + rhv = 2020)

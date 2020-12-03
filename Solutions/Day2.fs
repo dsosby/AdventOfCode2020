@@ -42,7 +42,6 @@ let isValidPasswordToo (value : string) =
     let letter = ruleparts.[2].[0]
     let letterone = password.[indexone] // I didn't strip the leading space, so get 1-based index for free
     let lettertwo = password.[indextwo]
-
     (letterone = letter) <> (lettertwo = letter)
 
 let solvePart2 (values : string) =

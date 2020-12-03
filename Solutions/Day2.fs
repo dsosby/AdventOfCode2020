@@ -43,7 +43,7 @@ let isValidPasswordToo (value : string) =
     let letterone = password.[indexone] // I didn't strip the leading space, so get 1-based index for free
     let lettertwo = password.[indextwo]
 
-    (letterone = letter && lettertwo <> letter) || (letterone <> letter && lettertwo = letter) // xor?
+    (letterone = letter) <> (lettertwo = letter)
 
 let solvePart2 (values : string) =
     values.Split [| '\n' |]

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Runner": {
+      "commandName": "Project",
+      "commandLineArgs": "day4part1"
+    }
+  }
+}

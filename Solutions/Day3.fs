@@ -37,21 +37,23 @@ let solvePart1 (input : string) =
             printfn "Checking %d, %d (idx=%d) (max=%d) [%c]" x y idx input.Length input.[idx]
             input.[idx])
 
+    // TODO Need to debug this, worked with my sample input but not big input... I think maybe Trims as the \n was getting in the way or something?
+
     locations
     |> countIf (charIs '#')
     |> Some
 
 let inputToMatrix (input : string) =
     input.Trim().Split [| '\n' |]
+    |> Seq.map (fun x -> x.Trim())
     |> Seq.map Seq.toArray
     |> Seq.toArray
 
-let solvePart1Again (input : string) =
+let calculateTreesHit (input : string) slope =
     // Index into a matrix since I suck at off-by-one
     let map = inputToMatrix input
     let rows = map.Length
-    let cols = map.[0].Length - 1
-    let slope = (3, 1)
+    let cols = map.[0].Length
 
     let locations = 
         coordIter slope
@@ -71,12 +73,28 @@ let solvePart1Again (input : string) =
                 locationDebug +
                 System.String(map.[mapY].[mapX+1..])
             let replicationColumn = x / cols
-            printfn "(%d, %d)-%d\t %s" mapX mapY replicationColumn debugString
+            // printfn "(%d, %d)-%d\t %s" mapX mapY replicationColumn debugString
 
             location
            )
 
     locations
     |> countIf (charIs '#')
-    |> Some
 
+let solvePart1Again (input : string) =
+    Some (calculateTreesHit input (3, 1))
+
+let solvePart2 (input : string) =
+    let slopes = [
+        1,1;
+        3,1;
+        5,1;
+        7,1;
+        1,2;
+    ]
+    let calculation = calculateTreesHit input
+
+    slopes
+    |> Seq.map calculation
+    |> Seq.fold (fun acc (nxt : int) -> acc * (bigint nxt)) (bigint 1)
+    |> Some

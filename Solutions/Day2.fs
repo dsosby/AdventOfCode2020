@@ -1,18 +1,12 @@
 ﻿module Day2
 
+open Utilities
+
 // Sample passwords
 let samples = @"1-3 a: abcde
 1-3 b: cdefg
 2-9 c: ccccccccc"
 // Correct ones are lines 1 and 3
-
-let countIf pred seq =
-    let oneIfTrue = function
-        | c when (pred c) -> 1
-        | _ -> 0
-    seq
-    |> Seq.sumBy oneIfTrue
-
 
 let isValidPassword (value : string) =
     let parts = value.Split [| ':' |]

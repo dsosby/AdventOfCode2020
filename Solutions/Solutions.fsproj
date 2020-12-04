@@ -5,8 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utilities.fs" />
     <Compile Include="Day1.fs" />
     <Compile Include="Day2.fs" />
+    <Compile Include="Day3.fs" />
     <Compile Include="Solutions.fs" />
   </ItemGroup>
 

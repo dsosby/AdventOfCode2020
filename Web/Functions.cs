@@ -16,7 +16,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.solve("day1part1", requestBody));
+            return new OkObjectResult(Solutions.solve(1, 1, requestBody));
         }
 
         // TODO Refactor to use dynamic solver bindings
@@ -27,7 +27,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.solve("day1part2", requestBody));
+            return new OkObjectResult(Solutions.solve(1, 2, requestBody));
         }
 
         [FunctionName("Day2Part1")]
@@ -36,7 +36,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.solve("day2part1", requestBody));
+            return new OkObjectResult(Solutions.solve(2, 1, requestBody));
         }
 
         [FunctionName("Day2Part2")]
@@ -45,7 +45,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.solve("day2part2", requestBody));
+            return new OkObjectResult(Solutions.solve(2, 2, requestBody));
         }
 
         [FunctionName("Day3Part1")]
@@ -54,7 +54,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.solve("day3part1", requestBody));
+            return new OkObjectResult(Solutions.solve(3, 1, requestBody));
         }
 
         [FunctionName("Day3Part2")]
@@ -63,7 +63,7 @@ namespace AdventOfCode2020.Web
             ILogger log)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            return new OkObjectResult(Solutions.solve("day3part2", requestBody));
+            return new OkObjectResult(Solutions.solve(3, 2, requestBody));
         }
     }
 }

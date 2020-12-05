@@ -1,24 +1,32 @@
 ﻿module AdventOfCode2020.Solutions
 
-// TODO Move the Runner reflection solution to this assembly so it is accessible by Web
+open Microsoft.FSharp.Reflection
 
-// TODO Find a better way to deal with this... each solution having their own type.
-// Can I not have a Map of IFormattable option or something?
-// TODO Instead of registering, can I use reflection and attributes?
-let solutions = dict[
-    "day1part1", Day1.solvePart1 >> Option.map (sprintf "%A");
-    "day1part2", Day1.solvePart2 >> Option.map (sprintf "%A");
-    "day2part1", Day2.solvePart1 >> Option.map (sprintf "%A");
-    "day2part2", Day2.solvePart2 >> Option.map (sprintf "%A");
-    "day3part1", Day3.solvePart1Again >> Option.map (sprintf "%A");
-    "day3part2", Day3.solvePart2 >> Option.map (sprintf "%A");
-]
+let findSolver day part =
+    let moduleName = sprintf "Day%d" day
+    let assembly = typeof<Utilities.SolutionAttribute>.Assembly
+    let modules =
+        assembly.GetTypes()
+        |> Array.filter FSharpType.IsModule
 
-let solve key input =
+    assembly.GetType(moduleName).GetMethods()
+    |> Array.tryFind (fun mi ->
+        mi.CustomAttributes
+        |> Seq.exists (fun attr ->
+            attr.AttributeType = typeof<Utilities.SolutionAttribute> &&
+            (unbox<int> attr.ConstructorArguments.[0].Value) = part))
+    |> Option.map (fun mi (input : string) -> mi.Invoke(null, [| input |]))
+
+let solve day part input =
     match input with
     | (null|"") -> "This should be an HTTP 400"
     | input ->
-        let solver = solutions.[key]
-        match (solver input) with
+        let solver = findSolver day part
+        match solver with
+        | Some solver ->
+            solver input
+            |> unbox<obj option>
+            |> function
+                | Some solution -> solution.ToString()
+                | None -> "This should be an HTTP 400 maybe? (input was likely bad, or the solution sucks)"
         | None -> "This should be an HTTP 404"
-        | Some solution -> solution.ToString()

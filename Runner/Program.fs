@@ -32,6 +32,7 @@ let main argv =
             let saneInput = rawInput.Replace("\r", "")
             let solution = solver saneInput
             // TODO Unbox to option obj and print w/o "Some ..."
+            // TODO Implement Time
             printfn "%A" solution
             0
         | None -> eprintfn "No solution found for Day %d Part %d" day part; 1

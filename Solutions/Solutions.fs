@@ -1,5 +1,7 @@
 ﻿module AdventOfCode2020.Solutions
 
+// TODO Move the Runner reflection solution to this assembly so it is accessible by Web
+
 // TODO Find a better way to deal with this... each solution having their own type.
 // Can I not have a Map of IFormattable option or something?
 // TODO Instead of registering, can I use reflection and attributes?

@@ -20,9 +20,10 @@ let isValidPassword (value : string) =
     let letterCount = password |> countIf ((=) letter)
     letterCount >= minCount && letterCount <= maxCount
 
+[<Solution(part = 1)>]
 let solvePart1 (values : string) =
     // this would be fun with fparsec or something
-    values.Split [| '\n' |]
+    values.Trim().Split [| '\n' |]
     |> countIf isValidPassword
     |> Some
 
@@ -38,8 +39,9 @@ let isValidPasswordToo (value : string) =
     let lettertwo = password.[indextwo]
     (letterone = letter) <> (lettertwo = letter)
 
+[<Solution(part = 2)>]
 let solvePart2 (values : string) =
-    values.Split [| '\n' |]
+    values.Trim().Split [| '\n' |]
     |> countIf isValidPasswordToo
     |> Some
 

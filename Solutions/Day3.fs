@@ -81,9 +81,11 @@ let calculateTreesHit (input : string) slope =
     locations
     |> countIf (charIs '#')
 
+[<Solution(part = 1)>]
 let solvePart1Again (input : string) =
     Some (calculateTreesHit input (3, 1))
 
+[<Solution(part = 2)>]
 let solvePart2 (input : string) =
     let slopes = [
         1,1;

@@ -1,4 +1,5 @@
-﻿module Utilities
+﻿[<AutoOpen>]
+module Utilities
 
 open System
 

@@ -1,5 +1,7 @@
 ﻿module Day4
 
+open System.Text.RegularExpressions
+
 open Utilities
 
 let sample = @"
@@ -125,13 +127,91 @@ let isValidPassport passport =
        } -> true
     | _ -> false
 
-[<Solution(part = 1)>]
-let solvePart1 (input : string) =
-    // Count number of valid passports
-    input + "\n" // Reducer needs to somehow now to process the last line
+let parsePassports (passports: string) =
+    passports + "\n" // Reducer needs to somehow now to process the last line
     |> Seq.fold passportReducer defaultAccumulation
     |> fun acc -> acc.passports
+
+[<Solution(part = 1)>]
+let solvePart1 (input: string) =
+    // Count number of valid passports
+    input
+    |> parsePassports
     |> Seq.filter isValidPassport
+    |> Seq.length
+    |> Some
+
+let tryInt (maybeInt: string) =
+    match System.Int32.TryParse maybeInt with
+    | true, num -> Some num
+    | _ -> None
+
+let tryIntOption = Option.bind tryInt
+
+// TODO Is this included? Maybe something like inRange 0 32 Inclusive|LeftInclusive|RightInclusive or something?
+let inRange min max x = x >= min && x <= max
+
+// Active patterns match if Some
+let (|IntBetween|_|) min max = tryIntOption >> Option.filter (inRange min max)
+let (|BirthYear|_|) = tryIntOption >> Option.filter (inRange 1920 2002)
+let (|IssueYear|_|) = tryIntOption >> Option.filter (inRange 2010 2020)
+let (|ExpirationYear|_|) = tryIntOption >> Option.filter (inRange 2020 2030)
+
+let (|Regex|_|) pattern input =
+   let m = Regex.Match(input, pattern)
+   if m.Success then Some input else None
+
+let matches pattern input = Regex.Match(input, pattern).Success
+let isValidHeight str =
+    // I could do this with unit types, lists... blah
+    let m = Regex.Match(str, "(\\d+)(cm|in)")
+    if m.Success then
+        let unit = m.Groups.[2].Value
+        let value = tryInt m.Groups.[1].Value
+
+        match unit, value with
+        | "in", Some v when (inRange 59 76 v) -> true
+        | "cm", Some v when (inRange 150 193 v) -> true
+        | _ -> false
+    else
+        false
+
+(* byr (Birth Year) - four digits; at least 1920 and at most 2002.
+   iyr (Issue Year) - four digits; at least 2010 and at most 2020.
+   eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
+   hgt (Height) - a number followed by either cm or in:
+       If cm, the number must be at least 150 and at most 193.
+       If in, the number must be at least 59 and at most 76.
+   hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
+   ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
+   pid (Passport ID) - a nine-digit number, including leading zeroes.
+   cid (Country ID) - ignored, missing or not. *)
+let isReallyValidPassport passport =
+    // Let's get crazy and hammer active patterns
+    // BAH -- can't seem to get active patterns on record properties :(
+    // I'm tired -- doing this an easy way
+    passport.byr |> Option.bind tryInt |> Option.exists (inRange 1920 2002) &&
+    passport.iyr |> Option.bind tryInt |> Option.exists (inRange 2010 2020) &&
+    passport.eyr |> Option.bind tryInt |> Option.exists (inRange 2020 2030) &&
+    passport.hgt |> Option.exists isValidHeight &&
+    passport.hcl |> Option.exists (matches "#[0-9a-f]{6}") &&
+    passport.ecl |> Option.exists (matches "(amb)|(blu)|(brn)|(gry)|(grn)|(hzl)|(oth)") &&
+    passport.pid |> Option.exists (matches "^\\d{9}$")
+
+[<Solution(part = 2)>]
+let solvePart2 (input: string) =
+    let valid =
+        input
+        |> parsePassports
+        |> Seq.filter isReallyValidPassport
+
+    let s = function
+        | Some t -> t
+        | None -> ""
+
+    valid |> Seq.iter (fun x -> printfn "%A,%A,%A,%A,%A,%A,%A" (s x.byr) (s x.iyr) (s x.eyr) (s x.hgt) (s x.hcl) (s x.ecl) (s x.pid))
+
+    valid
     |> Seq.length
     |> Some
 

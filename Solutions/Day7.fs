@@ -8,7 +8,10 @@ let bagify (adjective, color) = Bag (adjective + " " + color)
 type Numerous<'a> = | Numerous of int * 'a
 let numerousThing numerous = // TODO Is there a better way than match?
     match numerous with
-    | Numerous (count, thing) -> thing
+    | Numerous (_, thing) -> thing
+let numerousCount numerous =
+    match numerous with
+    | Numerous (count, _) -> count
 
 let equalBag lhv rhv =
     match lhv, rhv with
@@ -62,6 +65,26 @@ let getCountOfHodlerBags (input: string) =
     |> getHodlers shinyGoldBag
     |> Set.count
 
+let getContainedBagCount bag rules =
+    // Find the target bag
+    // Get count of child bags
+    // Multiply each by its numerous count
+    // Sum it all up
+
+    let rec countWithinBag bag =
+        let targetBag = rules |> Seq.find (fun (b, _) -> equalBag b bag)
+        let _, childBags = targetBag
+        let thisCount = childBags |> Seq.map numerousCount |> Seq.sum
+        let childCount =
+            childBags
+            |> Seq.map (fun n -> (numerousCount n) * (numerousThing n |> countWithinBag))
+            |> Seq.sum
+        thisCount + childCount
+
+    countWithinBag bag
+
 [<Solution(part = 2)>]
 let getTotalContainedBags (input: string) =
-    "Test"
+    input
+    |> parseRules bagRule
+    |> getContainedBagCount shinyGoldBag

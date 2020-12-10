@@ -15,3 +15,5 @@ let countIf pred seq =
     |> Seq.sumBy oneIfTrue
 
 let charIs (c : char) = (=) c
+
+let splitLines (str: string) = str.Split [| '\n' |]

@@ -2,7 +2,7 @@
   "profiles": {
     "Runner": {
       "commandName": "Project",
-      "commandLineArgs": "--day 7 --part 2",
+      "commandLineArgs": "--day 8 --part 1",
       "workingDirectory": "C:\\Users\\Brandon\\Source\\repos\\AdventOfCode2020\\Runner"
     }
   }

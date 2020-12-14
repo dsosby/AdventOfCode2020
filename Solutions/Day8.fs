@@ -77,23 +77,20 @@ type ExecutionResult =
 | InfiniteLoop
 | Failure
 
-let incPc computer = { computer with pc = computer.pc + 1 }
-let incAcc computer inc = { computer with acc = computer.acc + inc }
-let jmpPc computer offset = { computer with pc = computer.pc + offset }
+let isSuccess result = match result with Success _ -> true | _ -> false
 
-// Is there a function for this? This seems common/re-usable
-let isSuccess = function
-    | Success x -> true
-    | _ -> false
+let incPc computer = { computer with pc = computer.pc + 1 }
+let incAcc inc computer = { computer with acc = computer.acc + (int64 inc) }
+let jmpPc offset computer = { computer with pc = computer.pc + offset }
 
 let reduceState computer op =
     match op with
     | NoOp _ ->
         computer |> incPc
     | Jump offset ->
-        computer |> jmpPc <| offset
+        computer |> jmpPc offset
     | Accumulate increment ->
-        computer |> incPc |> incAcc <| int64 increment
+        computer |> incPc |> incAcc increment
 
 let executeWithSuccessFind computer =
     let rec runNext computer =

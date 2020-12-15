@@ -47,3 +47,33 @@ let firstInvalidRow (input: string) =
 
     firstInvalidRow
     |> Option.map (Seq.last >> fst)
+
+// Part 2
+
+let sumMinAndMax nums = (nums |> Seq.min) + (nums |> Seq.max)
+
+let findWindowSummingTo (nums: int64 []) (value: int64) =
+    // Have two cursors (indexes) and a running sum
+    // while sum < value, add a new item
+    // if sum > value, subtract an item
+    // if sum = value, return slice between
+    // Mutable is bad, so do it recursively
+    let rec run i j acc =
+        if acc = value then nums.[i..j-1]
+        else if acc < value then run i (j + 1) (acc + nums.[j])
+        else if acc > value then run (i + 1) j (acc - nums.[i])
+        else [||]
+
+    run 0 1 nums.[0]
+
+[<Solution(part = 2)>]
+let findTheWeakness (input: string) =
+    // TODO input is parsed twice
+    let inputs = input |> parseInput
+    let windowFinder = findWindowSummingTo inputs
+
+    // Start with result from Solution 1
+    // Find a contiguous list of numbers that sum to above solution
+    // Return the min and max of this list
+    firstInvalidRow input
+    |> Option.map (windowFinder >> sumMinAndMax)

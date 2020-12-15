@@ -29,8 +29,7 @@ type ComputerState =
     { program: Operation array
       hitmap: BitArray
       pc: int
-      acc: int64
-      }
+      acc: int64 }
 
 let loadProgram (input: string) =
     let parsed = parse program input
@@ -92,41 +91,29 @@ let reduceState computer op =
     | Accumulate increment ->
         computer |> incPc |> incAcc increment
 
-let executeWithSuccessFind computer =
-    let rec runNext computer =
+let executeWithCuring computer =
+    let rec runNext allowCuring computer =
         // TODO Better infinite loop detection?
         if computer.pc >= computer.program.Length then Success(computer.acc)
         else if computer.hitmap.[computer.pc] then InfiniteLoop
         else
             let computer = { computer with hitmap = immutableSetBit computer.hitmap computer.pc true }
-            printfn "%d" computer.pc
 
-            // Given a nop, push [nop, jmp]
-            // Given a jmp, push [jmp, nop]
-            // DFS for SuccessResult
+            let executeOp allowCuring op = reduceState computer op |> runNext allowCuring
+            let op = computer.program.[computer.pc]
+            let result = executeOp allowCuring op
 
-            // TODO Issue -- the puzzle is change _exactly one_ instruction
-            // This implementation changes _many_
-            // Store if we've already made a "swap" (mapi and idx > 0?)
-            // If so, no more swaps allowed
+            // TODO Instead of mutating an existing function, how could I have composed?
+            match allowCuring, op, result with
+            | true, NoOp v, InfiniteLoop -> executeOp false (Jump(v))
+            | true, Jump v, InfiniteLoop -> executeOp false (NoOp(v))
+            | _, _, r -> r
 
-            let possibleOps =
-                match computer.program.[computer.pc] with
-                | NoOp x -> [NoOp(x); Jump(x)]
-                | Jump x -> [Jump(x); NoOp(x)]
-                | x -> [x]
-
-            let executeOp op = reduceState computer op |> runNext
-
-            let results = possibleOps |> List.map executeOp
-            let successResult = results |> List.tryFind isSuccess
-            Option.defaultValue InfiniteLoop successResult
-        
-    runNext computer
+    runNext true computer
 
 [<Solution(part = 2)>]
 let findSuccessfulExecution (input: string) =
     // Switch _exactly one_ nop->jmp OR a jmp->nop
     // One of these will produce a Success
     loadProgram input
-    |> Option.map executeWithSuccessFind
+    |> Option.map executeWithCuring

@@ -16,6 +16,7 @@
     <Content Include="Inputs\Day7.txt" />
     <Content Include="Inputs\Day8.txt" />
     <Content Include="Inputs\Day8Sample.txt" />
+    <Content Include="Inputs\Day9.txt" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

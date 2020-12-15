@@ -1,0 +1,49 @@
+﻿module Day9
+
+let complementSet nums =
+    // Need to use F# 5.0 -- can upgrade if I get rid of the Azure Functions lib
+    // It would have reverse slicing using ^
+    let sumLast = (+) <| Array.last nums
+    let length = nums |> Array.length
+
+    nums.[..length-2]
+    |> Seq.map sumLast
+    |> Set.ofSeq
+
+let parseInput (input: string) =
+    input.Trim()
+    |> splitLines
+    |> Array.map int64
+
+[<Solution(part = 1)>]
+let firstInvalidRow (input: string) =
+    // Given last n numbers, a new number is considered
+    // valid iff a sum of 2 of the n numbers equals the new number
+    // Solution:
+    //  Start at nth
+    //  Look back nth
+    //  Calculate all sums of previous int, store in Set
+    //  Given a new number, n+1, look at sets calculated for prior window
+    let windowSize = 25
+    let inputs = input |> parseInput
+    let sets =
+        inputs
+        |> Seq.mapi (fun idx i ->
+            (i, complementSet inputs.[idx - windowSize .. idx]))
+        |> Seq.cache
+
+    let firstInvalidRow = 
+        sets
+        |> Seq.windowed (windowSize + 1)
+        |> Seq.tryFind (fun sets ->
+            // TODO Seq.last is probably slow
+            let checkSets = sets |> Seq.take windowSize |> Seq.map snd
+            let toCheck = sets |> Seq.last |> fst
+            let containsSum = Set.contains toCheck
+
+            checkSets
+            |> Seq.exists containsSum
+            |> not)
+
+    firstInvalidRow
+    |> Option.map (Seq.last >> fst)
